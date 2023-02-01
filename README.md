@@ -42,12 +42,12 @@ Also, I tried that the solution can get a more simplified way of be understood b
       ```
   
   - Activate the virtual enviroment    
-      _ _For linux/MacOS users:
+       _For linux/MacOS users:_ 
      ```
       source venv/bin/activate
      ```
      
-      _ _For windows users:
+       _For windows users:_ 
      ```
       \venv\Scripts\activate
      ```
