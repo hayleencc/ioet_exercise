@@ -3,18 +3,14 @@ from src.models.employee import *
 
 class CoincidenceController:
 
-    def __init__(self, employees: list):
-        self.employees = employees
-
-    def search_coincidences_schedule(self):
+    def search_coincidences_schedule(self, employees: list):
         index_begin = 0
         move_begin = 1
-        self.iterate_employees(self.employees, index_begin, move_begin)  
+        self.iterate_employees(self, employees, index_begin, move_begin)  
         
     
-    
     def iterate_employees(self, employees, index_begin: int, next_move: int):
-
+    
         coincidences_employees = {}
         limit = index_begin + next_move
 
@@ -23,15 +19,22 @@ class CoincidenceController:
             employeeA = employees[index_begin]
             next_employee = employees[index_begin+next_move]
             tuple_employees_names =  employeeA.get_name()+'-'+next_employee.get_name()
-            counter = self.iterate_schedule(employeeA.get_schedule(), next_employee.get_schedule())
+            counter = self.iterate_schedule(self, employeeA.get_schedule(), next_employee.get_schedule())
             coincidences_employees[tuple_employees_names]=counter
-            self.iterate_employees(employees, index_begin, next_move+1)
+            self.iterate_employees(self,employees, index_begin, next_move+1)
             print(tuple_employees_names+": "+str(counter))
         
         if (limit== len(employees)):
-            self.iterate_employees(employees, index_begin+1, 1)
+            self.iterate_employees(self,employees, index_begin+1, 1)
 
         return coincidences_employees
+
+
+    def comparate_schedules_two_employees(self, employee_a:Employee, employee_b:Employee, index_begin:int, next_move:int):
+        tuple_employees_names =  employee_a.get_name()+'-'+employee_b.get_name()
+        counter = self.iterate_schedule(self, employee_a.get_schedule(), employee_b.get_schedule())
+        print(tuple_employees_names+": "+str(counter))
+        next_move+=1
 
 
     def iterate_schedule(self, schedulesA: Schedule, schedulesB: Schedule):
@@ -40,7 +43,7 @@ class CoincidenceController:
             iterate_scheduleA = schedulesA[i]
             for j in range (len(schedulesB)):
                 iterate_scheduleB = schedulesB[j]
-                counter = self.compare_day_and_hours(iterate_scheduleA, iterate_scheduleB, counter)
+                counter = self.compare_day_and_hours(self, iterate_scheduleA, iterate_scheduleB, counter)
 
         return counter
 
