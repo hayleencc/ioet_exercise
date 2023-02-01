@@ -22,3 +22,49 @@ Also, I tried that the solution can get a more simplified way of be understood b
 ### UML Diagram
 
 ![UML Diagram_ACME solution](https://user-images.githubusercontent.com/66764846/216175016-a46e92ef-0d7f-4f34-9e84-f4aa84355c74.png)
+
+
+## How to run locally
+
+- Clone the repository
+   ```
+   git clone https://github.com/hayleencc/ioet_exercise.git
+   cd ioet_exercise
+   ```
+   
+ - Create a virtual environment in the root folder of the project
+   ```
+   python3 -m venv venv
+   ```
+      If you have some trouble you can try with with:
+      ```
+      python -m venv venv
+      ```
+  
+  - Activate the virtual enviroment    
+      _ _For linux/MacOS users:
+     ```
+      source venv/bin/activate
+     ```
+     
+      _ _For windows users:
+     ```
+      \venv\Scripts\activate
+     ```
+   
+  - Install the dependencies   
+      ```
+     pip3 install -r requirements.txt
+     ```
+     
+  - Run the project  
+      ```
+     python main.py 
+     ```
+     
+   - Run tests 
+      ```
+     pytest
+     ```
+ 
+ 
