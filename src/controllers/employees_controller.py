@@ -1,43 +1,44 @@
 from datetime import time
-from models.employee import *
-from models.schedule import *
+from src.models.employee import *
+from src.models.schedule import *
 
 
-class employeesController:
 
-    def __init__(self, employees_list):
-        self.employees_list = employees_list
+class EmployeesController:
 
-    def parseHours(self, hour_str): #the hours will be an object of time type instead str
-        hour_list = hour_str.split(":")
-        finalTime = time(int(hour_list[0]),int(hour_list[1]))
-        return finalTime
+    def __init__(self, employees: list):
+        self.employees = employees
+
+    def parsed_hours(self, hour: str): 
+        hour_times = hour.split(":")
+        parsed_time = time(int(hour_times[0]),int(hour_times[1]))
+        return parsed_time
 
 
-    def createSchedule(self, date_str): #create an array of Schedule objects with parsed hours 
-        schedules = {}
-        for date in date_str:
-            hours_time = []
-            hours_str = date.split("-")
-            day = hours_str[0][0:2]
-            hours_str[0]=hours_str[0][2:]
-            startTime = self.parseHours(hours_str[0])
-            finishTime = self.parseHours(hours_str[1])
-            #schedules.append(Schedule(day, startTime, finishTime))
-            sch = Schedule(day, startTime, finishTime)
-            schedules[day] = dict([('startTime', startTime), ('finishTime', finishTime)])
+    def createSchedule(self, schedules: list): 
+        formated_schedules = []
+        for date in schedules:
+            hours = date.split("-")
+            day = hours[0][0:2]
+            hours[0]=hours[0][2:]
+            start_time = self.parsed_hours(hours[0])
+            finish_time = self.parsed_hours(hours[1])
+            parsed_schedule= Schedule(day, start_time, finish_time)
+            #formated_schedules[day] = dict([('start_time', start_time), ('finish_time', finish_time)])
+            #formated_schedules[day] = schedule
+            formated_schedules.append(parsed_schedule)
             #print(a.getSchedule)
-        return schedules
+        return formated_schedules
 
 
     def createEmployee(self):
-        finalEmployees = []
-        for one_employee in self.employees_list:
-            schedules = one_employee.split(",")
-            emp_name = schedules[0].split("=")[0]
-            first_sch = schedules[0].split("=")[1]
-            schedules[0]= first_sch
-            parseSchedules = self.createSchedule(schedules)
-            new_employee = Employee(emp_name, parseSchedules)
-            finalEmployees.append(new_employee)
-        return finalEmployees
+        employees = []
+        for employee in self.employees:
+            schedules = employee.split(",")
+            employee_name = schedules[0].split("=")[0]
+            first_schedule = schedules[0].split("=")[1]
+            schedules[0]= first_schedule
+            parsed_schedules = self.createSchedule(schedules)
+            new_employee = Employee(employee_name, parsed_schedules)
+            employees.append(new_employee)
+        return employees

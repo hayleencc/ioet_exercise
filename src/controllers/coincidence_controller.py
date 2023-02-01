@@ -1,37 +1,65 @@
-from models.schedule import *
+from src.models.schedule import *
+from src.models.employee import *
 
-class coincidenceController:
+class CoincidenceController:
 
-    def __init__(self, employees_list):
-        self.employees_list = employees_list    
-    
-    def searchEmployeesCoincidence(self):
-        coincidences = {}
+    def __init__(self, employees: list):
+        self.employees = employees
 
-        for i in range(len(self.employees_list)):
-            for j in range(i+1, len(self.employees_list)):
-                coincidences[(self.employees_list[i].getName(),self.employees_list[j].getName())] = 0
-                self.compareDayHours(self.employees_list[i], self.employees_list[j], coincidences)
-
-        return coincidences
-
-
-    def compareDayHours(self, employee1, employee2, coincidences):
-        sch_emp1 = employee1.getSchedule()
-        sch_emp2 = employee2.getSchedule()
-
-        for day in sch_emp1.keys():
-            if (day in sch_emp2.keys()):
-                
-                startTime_1 = sch_emp1[day]['startTime']
-                finishTime_1 = sch_emp1[day]['finishTime']
-                startTime_2 = sch_emp2[day]['startTime']
-                finishTime_2 = sch_emp1[day]['finishTime']
-
-                if(startTime_1<=startTime_2<=finishTime_1 and startTime_1<=finishTime_2<=finishTime_1) or (startTime_2 <=startTime_1<=finishTime_2 and startTime_2<=finishTime_1<=finishTime_2):
-                    coincidences[(employee1.getName(),employee2.getName())]+=1
-                
-                
-
+    def search_coincidences_schedule(self):
+        index_begin = 0
+        move_begin = 1
+        self.iterate_employees(self.employees, index_begin, move_begin)  
+        
     
     
+    def iterate_employees(self, employees, index_begin: int, next_move: int):
+
+        coincidences_employees = {}
+        limit = index_begin + next_move
+
+        if(limit < len(employees)):
+
+            employeeA = employees[index_begin]
+            next_employee = employees[index_begin+next_move]
+            tuple_employees_names =  employeeA.get_name()+'-'+next_employee.get_name()
+            counter = self.iterate_schedule(employeeA.get_schedule(), next_employee.get_schedule())
+            coincidences_employees[tuple_employees_names]=counter
+            self.iterate_employees(employees, index_begin, next_move+1)
+            print(tuple_employees_names+": "+str(counter))
+        
+        if (limit== len(employees)):
+            self.iterate_employees(employees, index_begin+1, 1)
+
+        return coincidences_employees
+
+
+    def iterate_schedule(self, schedulesA: Schedule, schedulesB: Schedule):
+        counter = 0
+        for i in range(len(schedulesA)):
+            iterate_scheduleA = schedulesA[i]
+            for j in range (len(schedulesB)):
+                iterate_scheduleB = schedulesB[j]
+                counter = self.compare_day_and_hours(iterate_scheduleA, iterate_scheduleB, counter)
+
+        return counter
+
+    def compare_day_and_hours(self, scheduleA: Schedule, scheduleB:Schedule, matches: int):
+
+        start_time_a = scheduleA.get_start_time() #[day]['start_time']
+        finish_time_a= scheduleA.get_finish_time()#[day]['finish_time']
+        start_time_b = scheduleB.get_start_time() 
+        finish_time_b = scheduleB.get_finish_time()
+
+        if(scheduleA.get_day()== scheduleB.get_day()):
+
+            a_contains_b = (start_time_a < start_time_b) and (finish_time_a > finish_time_b)
+            a_equals_b = (start_time_a == start_time_b) and (finish_time_a == finish_time_b)
+            b_contains_a = (start_time_b < start_time_a) and (finish_time_b > finish_time_a)
+            a_after_b = (start_time_a > start_time_b or start_time_a == start_time_b) and (finish_time_a > finish_time_b or finish_time_a == finish_time_b) and (start_time_a < finish_time_b)
+            a_before_b = (start_time_a < start_time_b or start_time_a == start_time_b) and (finish_time_a < finish_time_b or finish_time_a == finish_time_b) and (start_time_b < finish_time_a)
+
+            if (a_contains_b or a_equals_b or b_contains_a or a_after_b or a_before_b):
+                matches+=1
+
+        return matches

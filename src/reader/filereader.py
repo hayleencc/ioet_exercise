@@ -1,6 +1,6 @@
-class fileReader:
+class FileReader:
 
-    def readFile(path):
+    def read_file(path):
         lines = []
         with open(path) as file:
             for line in file:
